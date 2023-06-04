@@ -17,8 +17,8 @@ func main() {
 
 	word := arguments.ParseArguments(os.Args[1:])
 	if word == "" {
-		fmt.Println("Usage: APPLICATION.exe [-limit INT] INPUT WORD")
-		return
+		fmt.Println("Usage: tra-slovnik-sk-go [-limit INT] INPUT WORD")
+		return 
 	}
 
 	switched_ensk, items_ensk, err := GetData(req.EN_SK, word, *limit)
