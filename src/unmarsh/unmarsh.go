@@ -27,6 +27,9 @@ type Data struct {
 	}
 }
 
+// UnMarsh is a Go function that unmarshals the provided byte slice into a Data struct.
+//
+// It takes a byte slice as a parameter and returns a Data struct and an error.
 func UnMarsh(body []byte) (Data, error) {
 	data := Data{}
 
