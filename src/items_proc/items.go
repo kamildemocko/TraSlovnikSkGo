@@ -1,17 +1,27 @@
 package items_proc
 
+type UrlType int
 
-type All = []struct{
-	Type string
+const (
+	UrlTypeNorm UrlType = iota
+	UrlTypeRev
+)
+
+type All = []struct {
+	Type     UrlType
 	Switched bool
-	Items []map[string]string
+	Items    []map[string]string
 }
 
 type Parsed struct {
-	Ensk map[string][]string
-	Sken map[string][]string
+	Normal   map[string][]string
+	Reversed map[string][]string
 }
 
+// ParseItems parses the items and returns the parsed result.
+//
+// Parameter(s): all All
+// Return type: Parsed
 func ParseItems(all All) Parsed {
 	parsed := Parsed{}
 
@@ -20,28 +30,33 @@ func ParseItems(all All) Parsed {
 			continue
 		}
 
-		if it.Type == "sken" {
-			parsed.Sken = processItems(it.Type, it.Items)
-		} else if it.Type == "ensk" {
-			parsed.Ensk = processItems(it.Type, it.Items)
+		if it.Type == UrlTypeNorm {
+			parsed.Normal = processItems(it.Type, it.Items)
+		} else if it.Type == UrlTypeRev {
+			parsed.Reversed = processItems(it.Type, it.Items)
 		}
 	}
 
 	return parsed
 }
 
-func processItems(type_ string, items []map[string]string) map[string][]string {
-	preparedData := map[string][]string{}
+// processItems processes items based on the specified UrlType and returns a map of strings to string slices.
+//
+// type_ UrlType - the type of URL
+// items []map[string]string - a slice of maps containing string key-value pairs
+// map[string][]string - a map of strings to string slices
+func processItems(type_ UrlType, items []map[string]string) map[string][]string {
+	prepData := map[string][]string{}
 
-	if type_ == "sken" {
+	if type_ == UrlTypeNorm {
 		for _, w := range items {
-			preparedData[w["word_sk"]] = append(preparedData[w["word_sk"]], w["translation"])
+			prepData[w["translation"]] = append(prepData[w["translation"]], w["word_sk"])
 		}
-	} else if type_ == "ensk" {
+	} else if type_ == UrlTypeRev {
 		for _, w := range items {
-			preparedData[w["translation"]] = append(preparedData[w["translation"]], w["word_sk"])
+			prepData[w["word_sk"]] = append(prepData[w["word_sk"]], w["translation"])
 		}
 	}
 
-	return preparedData
+	return prepData
 }

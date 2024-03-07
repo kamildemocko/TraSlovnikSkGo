@@ -1,15 +1,29 @@
 package arguments
 
-import "strings"
+import (
+	"flag"
+	"strings"
+)
 
-func ParseArguments(a []string) string {
-	if len(a) == 0 || a[0] == "limit" {
-		return ""
+// ParseArguments parses the input arguments and returns the limit, language, and joined string.
+//
+// Parameter(s):
+//   a []string - the input arguments
+// Return type(s):
+//   int - the limit
+//   string - the language
+//   string - the joined string
+func ParseArguments(a []string) (int, string, string) {
+	limit := flag.Int("limit", 10, "Enter number - limit of results\n")
+        var language string
+	flag.StringVar(&language, "language", "EN", "Enter language - EN, DE, ES, IT, FR, HU, RU\n")
+	flag.StringVar(&language, "l", "EN", "Enter language - EN, DE, ES, IT, FR, HU, RU\n")
+	flag.Parse()
+
+        rest := flag.Args()
+	if len(rest) == 0 {
+		return 0, "", ""
 	}
 
-	if a[0] == "-limit" || a[0] == "--limit" {
-		a = a[2:]
-	}
-
-	return strings.Join(a, " ")
+	return *limit, strings.ToUpper(language), strings.Join(rest, " ")
 }

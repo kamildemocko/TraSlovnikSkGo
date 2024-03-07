@@ -1,67 +1,64 @@
 package main
 
 import (
-	"flag"
-	"fmt"
 	"os"
 
 	"github.com/kamildemocko/tra-slovnik-sk-go/src/arguments"
 	"github.com/kamildemocko/tra-slovnik-sk-go/src/items_proc"
 	"github.com/kamildemocko/tra-slovnik-sk-go/src/req"
-	"github.com/kamildemocko/tra-slovnik-sk-go/src/unmarsh"
 )
 
 func main() {
-	limit := flag.Int("limit", 10, "Enter number - limit of results\n")
-	flag.Parse()
+        validLanguages := map[string]bool{
+                "EN": true,
+                "DE": true,
+                "ES": true,
+                "IT": true,
+                "FR": true,
+                "HU": true,
+                "RU": true,
+                }
 
-	word := arguments.ParseArguments(os.Args[1:])
-	if word == "" {
-		fmt.Println("Usage: tra-slovnik-sk-go [-limit INT] INPUT WORD")
+	limit, language, word := arguments.ParseArguments(os.Args[1:])
+
+	if word == "" || !validLanguages[language] {
+                items_proc.PrintHelp()
 		return 
 	}
 
-	switched_ensk, items_ensk, err := GetData(req.EN_SK, word, *limit)
+        var chosenLanguage req.Url
+        if language == "EN" {
+                chosenLanguage = req.AvailableLanguages.En
+        } else if language == "DE" {
+                chosenLanguage = req.AvailableLanguages.De
+        } else if language == "ES" {
+                chosenLanguage = req.AvailableLanguages.Es
+        } else if language == "IT" {
+                chosenLanguage = req.AvailableLanguages.It
+        } else if language == "FR" {
+                chosenLanguage = req.AvailableLanguages.Fr
+        } else if language == "HU" {
+                chosenLanguage = req.AvailableLanguages.Hu
+        } else if language == "RU" {
+                chosenLanguage = req.AvailableLanguages.Ru
+        }
+
+	switched_normal, items_normal, err := req.GetData(chosenLanguage.Normal, word, limit)
 	if err != nil {
 		panic(err)
 	}
 
-	switched_sken, items_sken, err := GetData(req.SK_EN, word, *limit)
+	switched_reversed, items_reversed, err := req.GetData(chosenLanguage.Reversed, word, limit)
 	if err != nil {
 		panic(err)
 	}
 
 	all := items_proc.All {
-		{"ensk", switched_ensk, items_ensk},
-		{"sken", switched_sken, items_sken},
+		{items_proc.UrlTypeNorm, switched_normal, items_normal},
+		{items_proc.UrlTypeRev, switched_reversed, items_reversed},
 	}
 
 	parsed := items_proc.ParseItems(all)
 
-	items_proc.PrintResult(word, parsed)
-}
-
-func GetData(url string, word string, limit int) (bool, []map[string]string, error) {
-	// returns bool switched, Data
-
-	body, err := req.Get(url, word)
-	if err != nil {
-		return false, nil, err
-	}
-
-	data, err := unmarsh.UnMarsh(body)
-	if err != nil {
-		return false, nil, err
-	}
-
-	statusCode := data.StatusCode
-	if statusCode != 200 {
-		return false, nil, fmt.Errorf("expected code 200, got %d", statusCode)
-	}
-
-	items := data.Data.Regular.Items
-	if len(items) > limit {
-		items = items[:limit]
-	}
-	return data.Data.Switched,items, nil
+	items_proc.PrintResult(word, parsed, chosenLanguage.Language)
 }
