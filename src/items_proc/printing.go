@@ -1,6 +1,7 @@
 package items_proc
 
 import (
+	"flag"
 	"fmt"
 	"strings"
 )
@@ -46,8 +47,5 @@ func printKeyValue(k string, v []string) {
 }
 
 func PrintHelp() {
-		fmt.Println("Usage: program [-limit INT] [-l EN|DE|ES|IT|FR|HU|RU] INPUT WORD")
-		fmt.Println("Arguments:")
-		fmt.Println("\t-limit | --limit (INT): limit results")
-		fmt.Println("\t-l | --language (STR): translation language, default EN, available: EN|DE|ES|IT|FR|HU|RU")
+	flag.Usage()
 }
