@@ -3,9 +3,9 @@ package main
 import (
 	"os"
 
-	"github.com/kamildemocko/tra-slovnik-sk-go/internal/arguments"
-	"github.com/kamildemocko/tra-slovnik-sk-go/internal/items_proc"
-	"github.com/kamildemocko/tra-slovnik-sk-go/internal/req"
+	"github.com/kamildemocko/TraSlovnikSkGo/internal/arguments"
+	"github.com/kamildemocko/TraSlovnikSkGo/internal/items_proc"
+	"github.com/kamildemocko/TraSlovnikSkGo/internal/req"
 )
 
 func main() {

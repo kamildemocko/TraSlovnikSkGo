@@ -3,7 +3,7 @@ package req
 import (
 	"fmt"
 
-	"github.com/kamildemocko/tra-slovnik-sk-go/internal/unmarsh"
+	"github.com/kamildemocko/TraSlovnikSkGo/internal/unmarsh"
 )
 
 // GetData retrieves data from the given URL based on the provided word and limit.
