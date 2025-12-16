@@ -1,3 +1,3 @@
-module github.com/kamildemocko/tra-slovnik-sk-go
+module github.com/kamildemocko/TraSlovnikSkGo
 
 go 1.20
