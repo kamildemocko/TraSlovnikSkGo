@@ -6,6 +6,11 @@ slovnik.sk from command line
 Uses webpage slovnik.sk to translate between slovak and other languages:  
 EN, ES, IT, FR, DE, HU, RU
 
+## Installation
+```bash
+go install github.com/kamildemocko/TraSlovnikSkGo/cmd/tra@latest
+```
+
 ## Usage
 tra [-limit INT] [-l EN|DE|ES|IT|FR|HU|RU] INPUT WORD"  
 	Arguments:"  
