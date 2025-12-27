@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 
 	"github.com/kamildemocko/TraSlovnikSkGo/internal/arguments"
@@ -39,12 +40,12 @@ func main() {
 
 	switchedNormal, itemsNormal, err := req.GetData(chosenLanguage.Normal, word, limit)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	switchedReversed, itemsReversed, err := req.GetData(chosenLanguage.Reversed, word, limit)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	all := items_proc.All{
