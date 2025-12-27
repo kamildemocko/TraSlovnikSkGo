@@ -26,22 +26,16 @@ func main() {
 		return
 	}
 
-	var chosenLanguage req.Url
-	if language == "EN" {
-		chosenLanguage = req.AvailableLanguages.En
-	} else if language == "DE" {
-		chosenLanguage = req.AvailableLanguages.De
-	} else if language == "ES" {
-		chosenLanguage = req.AvailableLanguages.Es
-	} else if language == "IT" {
-		chosenLanguage = req.AvailableLanguages.It
-	} else if language == "FR" {
-		chosenLanguage = req.AvailableLanguages.Fr
-	} else if language == "HU" {
-		chosenLanguage = req.AvailableLanguages.Hu
-	} else if language == "RU" {
-		chosenLanguage = req.AvailableLanguages.Ru
+	languageMap := map[string]req.Url{
+		"EN": req.AvailableLanguages.En,
+		"DE": req.AvailableLanguages.De,
+		"ES": req.AvailableLanguages.Es,
+		"IT": req.AvailableLanguages.It,
+		"FR": req.AvailableLanguages.Fr,
+		"HU": req.AvailableLanguages.Hu,
+		"RU": req.AvailableLanguages.Ru,
 	}
+	chosenLanguage := languageMap[language]
 
 	switchedNormal, itemsNormal, err := req.GetData(chosenLanguage.Normal, word, limit)
 	if err != nil {
