@@ -45,14 +45,14 @@ func ParseItems(all All) Parsed {
 // type_ UrlType - the type of URL
 // items []map[string]string - a slice of maps containing string key-value pairs
 // map[string][]string - a map of strings to string slices
-func processItems(type_ UrlType, items []map[string]string) map[string][]string {
+func processItems(urlType UrlType, items []map[string]string) map[string][]string {
 	prepData := map[string][]string{}
 
-	if type_ == UrlTypeNorm {
+	if urlType == UrlTypeNorm {
 		for _, w := range items {
 			prepData[w["translation"]] = append(prepData[w["translation"]], w["word_sk"])
 		}
-	} else if type_ == UrlTypeRev {
+	} else if urlType == UrlTypeRev {
 		for _, w := range items {
 			prepData[w["word_sk"]] = append(prepData[w["word_sk"]], w["translation"])
 		}

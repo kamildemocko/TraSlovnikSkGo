@@ -43,19 +43,19 @@ func main() {
 		chosenLanguage = req.AvailableLanguages.Ru
 	}
 
-	switched_normal, items_normal, err := req.GetData(chosenLanguage.Normal, word, limit)
+	switchedNormal, itemsNormal, err := req.GetData(chosenLanguage.Normal, word, limit)
 	if err != nil {
 		panic(err)
 	}
 
-	switched_reversed, items_reversed, err := req.GetData(chosenLanguage.Reversed, word, limit)
+	switchedReversed, itemsReversed, err := req.GetData(chosenLanguage.Reversed, word, limit)
 	if err != nil {
 		panic(err)
 	}
 
 	all := items_proc.All{
-		{items_proc.UrlTypeNorm, switched_normal, items_normal},
-		{items_proc.UrlTypeRev, switched_reversed, items_reversed},
+		{items_proc.UrlTypeNorm, switchedNormal, itemsNormal},
+		{items_proc.UrlTypeRev, switchedReversed, itemsReversed},
 	}
 
 	parsed := items_proc.ParseItems(all)
