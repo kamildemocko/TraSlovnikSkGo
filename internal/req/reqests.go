@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 type Url struct {
@@ -79,10 +80,15 @@ var (
 //	[]byte - the retrieved data
 //	error - any error that occurred during the retrieval process
 func Get(url string, word string) ([]byte, error) {
-	resp, err := http.Get(set_query(url, word))
+	client := http.Client{
+		Timeout: 10 * time.Second,
+	}
+
+	resp, err := client.Get(set_query(url, word))
 	if err != nil {
 		return nil, ErrorGet
 	}
+	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
