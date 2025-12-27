@@ -10,19 +10,17 @@ var (
 )
 
 type Data struct {
-	StatusCode int
+	StatusCode   int
 	ErrorMessage string
-	Data struct {
+	Data         struct {
 		Regular struct {
 			Total int
 			Items []map[string]string
 		}
-		_ map[string]interface{}
-		_ map[string]interface{}
-		Switched bool
-		IsStrict bool
+		Switched   bool
+		IsStrict   bool
 		IsWildcard bool
-		IsFuzzy bool
+		IsFuzzy    bool
 		IsFulltext bool
 	}
 }

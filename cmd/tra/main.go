@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 
 	"github.com/kamildemocko/TraSlovnikSkGo/internal/arguments"
@@ -26,36 +27,30 @@ func main() {
 		return
 	}
 
-	var chosenLanguage req.Url
-	if language == "EN" {
-		chosenLanguage = req.AvailableLanguages.En
-	} else if language == "DE" {
-		chosenLanguage = req.AvailableLanguages.De
-	} else if language == "ES" {
-		chosenLanguage = req.AvailableLanguages.Es
-	} else if language == "IT" {
-		chosenLanguage = req.AvailableLanguages.It
-	} else if language == "FR" {
-		chosenLanguage = req.AvailableLanguages.Fr
-	} else if language == "HU" {
-		chosenLanguage = req.AvailableLanguages.Hu
-	} else if language == "RU" {
-		chosenLanguage = req.AvailableLanguages.Ru
+	languageMap := map[string]req.Url{
+		"EN": req.AvailableLanguages.En,
+		"DE": req.AvailableLanguages.De,
+		"ES": req.AvailableLanguages.Es,
+		"IT": req.AvailableLanguages.It,
+		"FR": req.AvailableLanguages.Fr,
+		"HU": req.AvailableLanguages.Hu,
+		"RU": req.AvailableLanguages.Ru,
+	}
+	chosenLanguage := languageMap[language]
+
+	switchedNormal, itemsNormal, err := req.GetData(chosenLanguage.Normal, word, limit)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	switched_normal, items_normal, err := req.GetData(chosenLanguage.Normal, word, limit)
+	switchedReversed, itemsReversed, err := req.GetData(chosenLanguage.Reversed, word, limit)
 	if err != nil {
-		panic(err)
-	}
-
-	switched_reversed, items_reversed, err := req.GetData(chosenLanguage.Reversed, word, limit)
-	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	all := items_proc.All{
-		{items_proc.UrlTypeNorm, switched_normal, items_normal},
-		{items_proc.UrlTypeRev, switched_reversed, items_reversed},
+		{items_proc.UrlTypeNorm, switchedNormal, itemsNormal},
+		{items_proc.UrlTypeRev, switchedReversed, itemsReversed},
 	}
 
 	parsed := items_proc.ParseItems(all)
