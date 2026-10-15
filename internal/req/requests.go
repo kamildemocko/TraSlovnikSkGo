@@ -2,6 +2,7 @@ package req
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -68,6 +69,24 @@ var (
 	ErrorRead = errors.New("error reading body from API call")
 )
 
+// Sets standard headers
+//
+// Parameters:
+//
+// req http.Request - request to attach the header to
+func setHeader(req http.Request) {
+	req.Header.Set("Accept", "*/*")
+	req.Header.Set("Accept-Language", "en-US,en;q=0.9")
+	req.Header.Set("Referer", "https://slovnik.aktuality.sk/preklad/anglicko-slovensky/?q=klb")
+	req.Header.Set("Sec-Ch-Ua", "\"Google Chrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"")
+	req.Header.Set("Sec-Ch-Ua-Mobile", "?0")
+	req.Header.Set("Sec-Ch-Ua-Platform", "\"Linux\"")
+	req.Header.Set("Sec-Fetch-Dest", "empty")
+	req.Header.Set("Sec-Fetch-Mode", "cors")
+	req.Header.Set("Sec-Fetch-Site", "same-origin")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36")
+}
+
 // Get retrieves the data from the specified URL with the given word.
 //
 // Parameters:
@@ -80,15 +99,29 @@ var (
 //	[]byte - the retrieved data
 //	error - any error that occurred during the retrieval process
 func Get(url string, word string) ([]byte, error) {
-	client := http.Client{
-		Timeout: 10 * time.Second,
+	finalUrl := setQuery(url, word)
+
+	req, err := http.NewRequest("GET", finalUrl, nil)
+	if err != nil {
+		return nil, err
 	}
 
-	resp, err := client.Get(set_query(url, word))
+	setHeader(*req)
+
+	client := http.Client{
+		Timeout: 30 * time.Second,
+	}
+
+	resp, err := client.Do(req)
 	if err != nil {
-		return nil, ErrorGet
+		return nil, fmt.Errorf("Error response from API: %s", err)
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		errBody, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("Unexpected status code: %d\nRaw Response: %s", resp.StatusCode, string(errBody))
+	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -98,12 +131,12 @@ func Get(url string, word string) ([]byte, error) {
 	return body, nil
 }
 
-// set_query takes theUrl and value as parameters and returns a string.
+// setQuery takes theUrl and value as parameters and returns a string.
 //
 // theUrl is the URL string where the value will be set.
 // value is the string to be escaped and set in the URL.
 // It returns the modified URL string.
-func set_query(theUrl string, value string) string {
+func setQuery(theUrl string, value string) string {
 	value = url.QueryEscape(value)
 	return strings.Replace(theUrl, "{q}", value, 1)
 }
